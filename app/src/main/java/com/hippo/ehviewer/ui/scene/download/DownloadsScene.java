@@ -738,6 +738,8 @@ public class DownloadsScene extends ToolbarScene
         mDragDropManager = null;
         mListDecoration = null;
         mGridDecoration = null;
+        mPaginationIndicator = null;
+        myPageChangeListener = null;
         EventBus.getDefault().unregister(this);
     }
 
