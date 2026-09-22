@@ -586,6 +586,7 @@ public class DownloadsScene extends ToolbarScene
         mDragDropManager = null;
         mListDecoration = null;
         mGridDecoration = null;
+        mPaginationController.onDestroyView();
         EventBus.getDefault().unregister(this);
     }
 
