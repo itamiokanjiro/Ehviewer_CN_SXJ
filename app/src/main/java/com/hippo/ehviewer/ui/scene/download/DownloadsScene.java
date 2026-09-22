@@ -176,7 +176,7 @@ public class DownloadsScene extends ToolbarScene
     private MarginItemDecoration mGridDecoration;
     private int mListMode = DownloadAdapter.TYPE_LIST;
 
-    // ?蝞∠???
+    // 拖拽管理器
     @Nullable
     private RecyclerViewDragDropManager mDragDropManager;
 
@@ -466,30 +466,30 @@ public class DownloadsScene extends ToolbarScene
     }
 
     private void setupRecyclerView(@NonNull Context context, @NonNull Resources resources) {
-        // ?????賜恣?
+        // 初始化拖拽管理器
         mDragDropManager = new RecyclerViewDragDropManager();
         try {
             mDragDropManager.setDraggingItemShadowDrawable(
                     (NinePatchDrawable) context.getResources().getDrawable(R.drawable.shadow_8dp));
         } catch (Exception e) {
-            // 敹賜蝖砌辣雿?詨?秤
+            // 忽略硬件位图相关错误
             android.util.Log.w("DownloadsScene", "Error setting drag shadow: " + e.getMessage());
         }
 
 
         mOriginalAdapter = new DownloadAdapter(this, this);
         mOriginalAdapter.setHasStableIds(true);
-        mAdapter = mDragDropManager.createWrappedAdapter(mOriginalAdapter); // ?????其誑?舀??
+        mAdapter = mDragDropManager.createWrappedAdapter(mOriginalAdapter); // 包装适配器以支持拖拽
         mDragDropManager.setCheckCanDropEnabled(false);
         mRecyclerView.setAdapter(mAdapter);
 
-        // ????憿萇??砍
+        // 初始化分页监听器
         mPaginationController.bindPageChangeListener(mOriginalAdapter, mRecyclerView);
         mLayoutManager = new AutoStaggeredGridLayoutManager(0, StaggeredGridLayoutManager.VERTICAL);
         mListMode = Settings.getDownloadListMode();
         applyListMode(resources);
 
-        // 霈曄蔭??函??
+        // 设置拖拽动画器
         final GeneralItemAnimator animator = new DraggableItemAnimator();
         mRecyclerView.setItemAnimator(animator);
 
@@ -498,7 +498,7 @@ public class DownloadsScene extends ToolbarScene
             mRecyclerView.setDrawingCacheEnabled(true);
             mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         } catch (Exception e) {
-            // 敹賜蝖砌辣雿?詨?秤
+            // 忽略硬件位图相关错误
             android.util.Log.w("DownloadsScene", "Error setting drawing cache: " + e.getMessage());
         }
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -515,12 +515,12 @@ public class DownloadsScene extends ToolbarScene
         if (itemAnimator instanceof GeneralItemAnimator) {
             ((GeneralItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
         }
-        // 撠??賜恣????訌ecyclerView
+        // 将拖拽管理器附加到RecyclerView
         if (mDragDropManager != null) {
             try {
                 mDragDropManager.attachRecyclerView(mRecyclerView);
             } catch (Exception e) {
-                // 敹賜蝖砌辣雿?詨?秤
+                // 忽略硬件位图相关错误
                 android.util.Log.w("DownloadsScene", "Error attaching drag manager: " + e.getMessage());
             }
         }
@@ -1004,7 +1004,7 @@ public class DownloadsScene extends ToolbarScene
         }
     }
 
-    // DownloadAdapterCallback ?亙摰
+    // DownloadAdapterCallback 接口实现
     @Override
     public int getIndexPage() {
         return mPaginationController.getIndexPage();
@@ -1149,13 +1149,13 @@ public class DownloadsScene extends ToolbarScene
     }
 
     private void updateAdapter() {
-        // 璉??Fragment ?臬撌脤???憒??芷???撱嗉??遣????
+        // 检查 Fragment 是否已附加，如果未附加则延迟创建适配器
         if (!isAdded()) {
             return;
         }
         mOriginalAdapter = new DownloadAdapter(this, this);
         mOriginalAdapter.setHasStableIds(true);
-        // ?踹????遣?????剁??湔雿輻??????
+        // 避免重复创建包装适配器，直接使用原始适配器
         mAdapter = mOriginalAdapter;
         if (mRecyclerView != null) {
             mRecyclerView.setAdapter(mAdapter);
@@ -1190,7 +1190,7 @@ public class DownloadsScene extends ToolbarScene
 
     @Override
     public void onDownloadSearchSuccess(List<DownloadInfo> list) {
-        // 璉??Fragment ?臬撌脤???憒??芷???敹賜??
+        // 检查 Fragment 是否已附加，如果未附加则忽略回调
         if (!isAdded()) {
             return;
         }
@@ -1206,7 +1206,7 @@ public class DownloadsScene extends ToolbarScene
 
     @Override
     public void onDownloadListHandleSuccess(List<DownloadInfo> list) {
-        // 璉??Fragment ?臬撌脤???憒??芷???敹賜??
+        // 检查 Fragment 是否已附加，如果未附加则忽略回调
         if (!isAdded()) {
             return;
         }
